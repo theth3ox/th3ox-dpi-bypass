@@ -20,9 +20,16 @@ echo   th3ox DPI Bypass
 echo   BASIT & ETKILI - GoodbyeDPI Teknik
 echo ============================================
 echo.
-echo DPI Bypass baslatiliyor...
+echo DPI Bypass arkaplanda baslatiliyor...
 echo.
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -File "%~dp0th3ox-engine.ps1"
+start /B powershell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File "%~dp0th3ox-engine.ps1"
+
+timeout /t 2 /nobreak >nul
+echo.
+echo [OK] th3ox-dpi arkaplanda calisiyor!
+echo.
+echo Kapatmak icin: th3ox-stop.cmd
+echo.
 
 pause

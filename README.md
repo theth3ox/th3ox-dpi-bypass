@@ -1,124 +1,79 @@
-# th3ox DPI Bypass - BASIT & ETKILI
+# th3ox-dpi - Discord DPI Bypass
 
-## SADECE TTL MANIPULASYONU - GoodbyeDPI Teknik
+Discord ve diğer engellenen servislere erişim için DPI (Deep Packet Inspection) bypass aracı.
 
-**th3ox artık en basit haliyle sadece TTL değerini değiştiriyor!**
+## Özellikler
 
----
-
-## Hızlı Başlangıç
-
-```
-1. th3ox-start.cmd -> Yönetici olarak çalıştır
-2. Discord/YouTube/Telegram kullan
-3. Durdurmak için: th3ox-stop.cmd
-```
-
----
-
-## Nasıl Çalışır?
-
-th3ox ne yapıyor?
-
-1. **TTL = 64** - Windows varsayılan TTL değeri (128) yerine Linux varsayılanı (64) kullanılır
-2. **DNS Cache Temizleme** - Yeni bağlantılar için DNS önbelleği temizlenir
-
-Bu kadar! Karmaşık ayarlar yok, sadece TTL manipülasyonu.
-
-### Neden TTL 64?
-
-- DPI cihazları Windows paketlerini (TTL=128) tanır ve engeller
-- TTL=64 ile paketler Linux/Android gibi görünür
-- DPI bypass için yeterli ve en hızlı yöntem
-
----
+- ✅ GoodbyeDPI WinDivert teknolojisi
+- ✅ Arkaplanda sessiz çalışma
+- ✅ Discord için özel optimize edilmiş parametreler
+- ✅ Fragment + TTL + Wrong Checksum kombinasyonu
+- ✅ Kolay başlat/durdur
 
 ## Kullanım
 
-```
-th3ox-start.cmd    Başlat (YÖNETİCİ)
-th3ox-stop.cmd     Durdur (YÖNETİCİ)
-```
+### Başlatma
+1. **th3ox-start.cmd** dosyasına sağ tıkla
+2. **Yönetici olarak çalıştır** seç
+3. Discord'u tamamen kapat (Task Manager'dan kontrol et)
+4. Discord'u tekrar aç
 
-**MUTLAKA Yönetici olarak çalıştır!**
-
----
-
-## Test
-
-1. th3ox-start.cmd çalıştır (Yönetici)
-2. Discord'u aç
-3. YouTube'u dene
-4. Telegram'ı test et
-
-Çalışmazsa bilgisayarı yeniden başlat ve tekrar dene.
-
----
-
-## Sorun Giderme
-
-**Çalışmıyor mu?**
-1. th3ox-stop.cmd çalıştır
-2. Bilgisayarı yeniden başlat
-3. th3ox-start.cmd yönetici olarak çalıştır
-4. Tarayıcı/Discord'u kapat-aç
-
-**Hala çalışmıyor:**
-- Antivirüsü geçici olarak kapat
-- VPN varsa kapat
-- Yönetici yetkisiyle çalıştırdığından emin ol
-
----
+### Durdurma
+- **th3ox-stop.cmd** çalıştır (yönetici yetkisi gerekmez)
 
 ## Teknik Detaylar
 
-**Değiştirilen Ayarlar:**
+**Aktif Parametreler:**
 ```
-netsh int ipv4 set global defaultcurhoplimit=64
-Registry: HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\DefaultTTL = 64
-DNS Cache: ipconfig /flushdns
+-f 2              Fragment position (HTTP + HTTPS)
+-e 2              Fragment size
+--set-ttl 4       TTL değeri (bypass için)
+--native-frag     Native fragmentation
+--reverse-frag    Reverse fragmentation
+--max-payload 1200 Maksimum paket boyutu
+--wrong-chksum    Yanlış checksum (DPI kafası karıştırma)
 ```
 
-**Geri Alma:**
+## Dosya Yapısı
+
 ```
-th3ox-stop.cmd çalıştır
-TTL otomatik 128'e döner
+th3ox-dpi/
+├── th3ox-dpi.exe      # Ana DPI bypass motoru (GoodbyeDPI)
+├── WinDivert.dll      # Paket yakalama kütüphanesi
+├── WinDivert64.sys    # Kernel driver
+├── th3ox-engine.ps1   # PowerShell wrapper
+├── th3ox-start.cmd    # Başlatma scripti
+├── th3ox-stop.cmd     # Durdurma scripti
+└── README.md          # Bu dosya
 ```
+
+## Sorun Giderme
+
+**Discord "Checking for updates" da kalıyor:**
+- th3ox-stop.cmd çalıştır
+- th3ox-start.cmd yönetici olarak çalıştır
+- Discord'u Task Manager'dan tamamen kapat
+- Discord'u tekrar aç
+
+**Program çalışıyor mu kontrol:**
+- Task Manager aç
+- "th3ox-dpi.exe" process'ini ara
+- Varsa çalışıyor
+
+**Hala çalışmıyor:**
+1. Windows Defender/Antivirüs th3ox-dpi.exe'yi engelliyor olabilir
+2. WinDivert64.sys driver yüklenememiş olabilir (yönetici yetkisi gerekli)
+3. Başka bir DPI bypass tool çalışıyor olabilir (çakışma)
+
+## Önemli Notlar
+
+⚠️ **Yönetici yetkisi zorunlu** - WinDivert kernel driver çalışması için gerekli
+⚠️ **Antivirüs uyarısı normal** - Paket manipülasyonu yapan her tool şüpheli görünür
+⚠️ **Discord her güncellemede** yeniden başlatılmalı
+
+## Yapımcı
+
+**th3ox** - Discord DPI Bypass Specialist
 
 ---
-
-## GoodbyeDPI ile İlişki
-
-Bu proje GoodbyeDPI'dan esinlenmiştir ancak daha basitleştirilmiştir:
-- GoodbyeDPI: Karmaşık paket manipülasyonu, çoklu parametre
-- th3ox: Sadece TTL değiştirme, tek tuş
-
-**Avantajları:**
-- Çok daha hızlı (sadece TTL)
-- Daha az kaynak kullanımı
-- Kolay kullanım (tek tuş)
-- Güvenilir (basit = az hata)
-- DefaultTTL (Registry)
-- MTU/MSS (Network Interface)
-- TCP Chimney Offload (Disabled)
-- TCP Autotuning (Restricted)
-- ECN Capability (Disabled)
-- TCP Timestamps (Disabled)
-- PMTU Discovery (Disabled)
-
-DNS ayarina DOKUNULMAZ!
-
----
-
-## Nasil Calisir?
-
-GoodbyeDPI gibi DPI cihazlarini atlatir:
-- TTL degistirilir -> DPI cihazi paketi goremez
-- Paketler kucultulur -> DPI analiz edemez
-- TCP ozellikleri kapatilir -> Paket takibi engellenir
-
----
-
-(c) 2025 th3ox Team
-
-NOT: Bu sistem SADECE DPI BYPASS yapar. DNS degistirmez!
+*GoodbyeDPI teknolojisi kullanılarak geliştirilmiştir.*
